@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>מחלקת הרכש המשפחתית 🛍️</title>
+<style>
+  :root{
+    --pink: #e8b4c0;
+    --pink-dark: #c98ea0;
+    --gold: #d4a94c;
+    --cream: #fdf6f0;
+    --ink: #3a2c2f;
+    --green: #4c8c6b;
+    --red: #c65b5b;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:'Segoe UI', Arial, sans-serif;
+    background: linear-gradient(180deg, var(--cream) 0%, #fbeee6 100%);
+    color: var(--ink);
+  }
+  header.hero{
+    text-align:center;
+    padding: 40px 16px 30px;
+    background: linear-gradient(160deg, var(--pink) 0%, var(--pink-dark) 100%);
+    color: white;
+    border-radius: 0 0 40px 40px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+  }
+  .hero img{
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 5px solid white;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+  }
+  .hero h1{
+    font-size: 1.8rem;
+    margin: 16px 0 4px;
+  }
+  .hero p.president{
+    font-size: 1.1rem;
+    font-weight: 800;
+    margin: 0 0 8px;
+    color: var(--gold);
+    text-shadow: 0 1px 2px rgba(0,0,0,0.15);
+  }
+  .hero p.caption{
+    font-size: 0.95rem;
+    opacity: 0.95;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+  main{
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 24px 16px 60px;
+  }
+  .counter-box{
+    background: white;
+    border: 2px dashed var(--gold);
+    border-radius: 18px;
+    padding: 16px;
+    text-align:center;
+    margin-bottom: 24px;
+  }
+  .counter-box .num{
+    font-size: 2.4rem;
+    font-weight: 800;
+    color: var(--pink-dark);
+  }
+  .counter-box .label{
+    font-size: 0.85rem;
+    color: #7a6a6d;
+  }
+  .cta-btn{
+    display:block;
+    width:100%;
+    padding: 18px;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: white;
+    background: linear-gradient(135deg, var(--pink-dark), var(--gold));
+    border: none;
+    border-radius: 16px;
+    cursor: pointer;
+    box-shadow: 0 6px 16px rgba(201,142,160,0.4);
+    transition: transform 0.15s ease;
+  }
+  .cta-btn:active{ transform: scale(0.97); }
+
+  .chips{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    justify-content:center;
+    margin: 18px 0 26px;
+  }
+  .chip{
+    padding: 8px 14px;
+    border-radius: 999px;
+    background: white;
+    border: 2px solid var(--pink-dark);
+    color: var(--pink-dark);
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .chip.selected{
+    background: var(--pink-dark);
+    color: white;
+  }
+
+  section.card{
+    background: white;
+    border-radius: 20px;
+    padding: 20px;
+    margin-top: 20px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+  }
+  section.card h2{
+    margin-top:0;
+    font-size: 1.1rem;
+    color: var(--pink-dark);
+  }
+  section.card ul{
+    padding-inline-start: 20px;
+    line-height: 1.7;
+    font-size: 0.95rem;
+  }
+
+  /* Modal */
+  .overlay{
+    position:fixed; inset:0;
+    background: rgba(0,0,0,0.5);
+    display:none;
+    align-items:flex-start;
+    justify-content:center;
+    padding: 24px 12px;
+    overflow-y:auto;
+    z-index: 50;
+  }
+  .overlay.open{ display:flex; }
+  .modal{
+    background: white;
+    border-radius: 20px;
+    max-width: 460px;
+    width: 100%;
+    padding: 24px;
+    position:relative;
+  }
+  .modal h2{
+    margin-top:0;
+    color: var(--pink-dark);
+  }
+  .modal .close{
+    position:absolute;
+    top:14px; left:14px;
+    background:none;
+    border:none;
+    font-size:1.4rem;
+    cursor:pointer;
+    color:#999;
+  }
+  label{
+    display:block;
+    font-weight:600;
+    font-size:0.9rem;
+    margin: 14px 0 6px;
+  }
+  select, input[type=text], input[type=number], textarea{
+    width:100%;
+    padding:10px 12px;
+    border-radius:10px;
+    border:1.5px solid #e2d2d6;
+    font-size:0.95rem;
+    font-family:inherit;
+  }
+  textarea{ min-height: 70px; resize:vertical; }
+
+  .cash-toggle{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    background: #fff7e6;
+    border: 2px dashed var(--gold);
+    border-radius: 14px;
+    padding: 12px 14px;
+    margin-top: 16px;
+  }
+  .cash-toggle span{ font-weight:700; font-size:0.9rem; }
+  .switch{
+    position:relative;
+    width:52px; height:28px;
+    flex-shrink:0;
+  }
+  .switch input{ opacity:0; width:0; height:0; }
+  .slider{
+    position:absolute; cursor:pointer; inset:0;
+    background:#ccc; border-radius:28px; transition:.2s;
+  }
+  .slider:before{
+    content:""; position:absolute; height:22px; width:22px;
+    right:3px; bottom:3px; background:white; border-radius:50%; transition:.2s;
+  }
+  input:checked + .slider{ background: var(--green); }
+  input:checked + .slider:before{ transform: translateX(-24px); }
+
+  .price-note{
+    margin-top:8px;
+    font-size:0.85rem;
+    font-weight:700;
+    color: var(--green);
+    display:none;
+  }
+  .price-note.show{ display:block; }
+
+  .submit-btn{
+    margin-top:18px;
+    width:100%;
+    padding:14px;
+    border:none;
+    border-radius:14px;
+    background: var(--green);
+    color:white;
+    font-weight:700;
+    font-size:1rem;
+    cursor:pointer;
+  }
+
+  /* Approval result */
+  .approval{
+    text-align:center;
+  }
+  .stamp{
+    font-size:2.4rem;
+    margin: 8px 0;
+  }
+  .approval .ticket{
+    background: var(--cream);
+    border: 2px dashed var(--pink-dark);
+    border-radius: 14px;
+    padding: 16px;
+    text-align:right;
+    font-size:0.9rem;
+    line-height:1.8;
+    margin-top:12px;
+  }
+  .approval .justification{
+    font-style: italic;
+    color: #7a6a6d;
+    margin-top:6px;
+  }
+  footer{
+    text-align:center;
+    font-size:0.78rem;
+    color:#a08e91;
+    padding: 20px 16px 40px;
+  }
+
+  #floatingLayer{
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 40;
+  }
+  .bubble{
+    position: absolute;
+    width: 76px;
+    height: 76px;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18), inset -6px -6px 14px rgba(0,0,0,0.08), inset 4px 6px 10px rgba(255,255,255,0.6);
+    opacity: 0;
+    animation-name: bubble-life;
+    animation-timing-function: ease-in-out;
+    animation-fill-mode: forwards;
+  }
+  .bubble .emoji{ font-size: 1.5rem; line-height: 1; }
+  .bubble .brand-label{
+    font-size: 0.5rem;
+    font-weight: 800;
+    color: white;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.35);
+    margin-top: 2px;
+    padding: 0 4px;
+  }
+  @keyframes bubble-life{
+    0%   { opacity: 0; transform: scale(0.25); }
+    12%  { opacity: 1; transform: scale(1); }
+    78%  { opacity: 1; transform: scale(1.04); }
+    90%  { opacity: 1; transform: scale(1.3); }
+    100% { opacity: 0; transform: scale(0.15); }
+  }
+  .pop-burst{
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    opacity: 1;
+    animation-name: pop-fly;
+    animation-timing-function: ease-out;
+    animation-fill-mode: forwards;
+  }
+  @keyframes pop-fly{
+    0%   { opacity: 1; transform: translate(0, 0) scale(1); }
+    100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(0.3); }
+  }
+
+  #confettiLayer{
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 100;
+  }
+  .confetti-piece{
+    position: absolute;
+    top: -20px;
+    width: 9px;
+    height: 14px;
+    opacity: 0.95;
+    animation-name: confetti-fall;
+    animation-timing-function: cubic-bezier(0.2, 0.6, 0.4, 1);
+    animation-fill-mode: forwards;
+  }
+  @keyframes confetti-fall{
+    0%   { transform: translateY(0) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(105vh) rotate(600deg); opacity: 0; }
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <img src="data:image/webp;base64,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" alt="הודיה, נשיאת ועדת הרכש">
+  <h1>מחלקת הרכש המשפחתית 🏛️🛍️</h1>
+  <p class="president">בנשיאות הודיה 👑</p>
+  <p class="caption">יו״ר הנצחית של ועדת "אני ממש חייבת את זה, זה דחוף". כל בקשת רכישה עוברת פה — לפרוטוקול בלבד, כי ממילא זה כבר בדרך הביתה.</p>
+</header>
+
+<main>
+
+  <div class="counter-box">
+    <div class="num" id="counterNum">0</div>
+    <div class="label">מוצרים שאושרו מאז שנפתח הדף, בלי שממש היה בהם צורך 📦</div>
+  </div>
+
+  <button class="cta-btn" id="openFormBtn">📝 פתיחת קריאה לרכישה משפחתית חדשה</button>
+
+  <p style="text-align:center; font-size:0.85rem; color:#7a6a6d; margin-top:10px;">מי המבקש/ת? (בחירה כאן תמלא אוטומטית את הטופס)</p>
+  <div class="chips" id="chips">
+    <div class="chip" data-name="נעם">נעם</div>
+    <div class="chip" data-name="גילת">גילת</div>
+    <div class="chip" data-name="שירה">שירה</div>
+    <div class="chip" data-name="חג'בי">חג'בי</div>
+    <div class="chip" data-name="מתניה">מתניה</div>
+    <div class="chip" data-name="עדן">עדן</div>
+    <div class="chip" data-name="סבא עוזי">סבא עוזי</div>
+    <div class="chip" data-name="סבתא איילת">סבתא איילת</div>
+  </div>
+
+  <section class="card">
+    <h2>📜 תקנון הוועדה (חשוב לקרוא. או לא, ממילא לא מעכב כלום)</h2>
+    <ul>
+      <li>כל בקשה נבדקת ביסודיות רבה, למשך כ־0.4 שניות.</li>
+      <li>אחוז האישורים ההיסטורי של הוועדה עומד על 100%.</li>
+      <li>"רק להסתכל" ו"בלי לקנות" הן מילים שאינן מוכרות במערכת שלנו.</li>
+      <li>תשלום במזומן = המוצר בחינם. זה לא הגיוני, אבל זה החוק אצלנו.</li>
+      <li>האהבה של הנשיאה לניצת הדובדבן, טישו הנמל, אושר עד ו-ZARA אינה פרופורציונלית בעליל — אבל הוועדה מכבדת את זה ולא שופטת (הרבה).</li>
+    </ul>
+  </section>
+
+</main>
+
+<div class="overlay" id="overlay">
+  <div class="modal" id="formView">
+    <button class="close" id="closeBtn">✕</button>
+    <h2>טופס בקשת רכישה 🧾</h2>
+
+    <label for="reqName">מי המבקש/ת?</label>
+    <select id="reqName">
+      <option value="">— בחר/י —</option>
+      <option>נעם</option>
+      <option>גילת</option>
+      <option>שירה</option>
+      <option>חג'בי</option>
+      <option>מתניה</option>
+      <option>עדן</option>
+      <option>סבא עוזי</option>
+      <option>סבתא איילת</option>
+    </select>
+
+    <label for="category">קטגוריית מוצר</label>
+    <select id="category">
+      <option>בגדים (עוד)</option>
+      <option>נעליים (עוד זוג "אחרון שאני קונה")</option>
+      <option>אביזרים לתינוקת</option>
+      <option>קישוט לבית שאף אחד לא ביקש</option>
+      <option>משהו שראיתי באינסטגרם לפני 3 דקות</option>
+      <option>כלי מטבח שיישאר באריזה</option>
+      <option>מוצר שכבר יש לנו 3 כאלה</option>
+      <option>אחר</option>
+    </select>
+
+    <label for="itemType">סוג המוצר (פירוט)</label>
+    <input type="text" id="itemType" placeholder="לדוגמה: שמלת תחרה נוספת בוורוד...">
+
+    <label for="price">מחיר משוער (₪)</label>
+    <input type="number" id="price" min="0" placeholder="0">
+
+    <div class="cash-toggle">
+      <span>💵 תשלום במזומן = קבלה בחינם</span>
+      <label class="switch">
+        <input type="checkbox" id="cashToggle">
+        <span class="slider"></span>
+      </label>
+    </div>
+    <div class="price-note" id="priceNote">🎉 מעולה! מחיר סופי: 0 ₪. ככה זה עובד אצלנו, אל תשאלו שאלות.</div>
+
+    <label for="dedication">תרצו הקדשה?</label>
+    <textarea id="dedication" placeholder="לדוגמה: לזכר הפעם ה-127 שאמרנו 'זו הפעם האחרונה שאני קונה משהו'..."></textarea>
+
+    <button class="submit-btn" id="submitBtn">✅ הגש לוועדה לאישור</button>
+  </div>
+
+  <div class="modal approval" id="approvalView" style="display:none;">
+    <button class="close" id="closeBtn2">✕</button>
+    <div class="stamp">🟢✅</div>
+    <h2>אושר פה אחד!</h2>
+    <p>(כמו תמיד. הוועדה מעולם לא דחתה בקשה)</p>
+    <div class="ticket" id="ticketBody"></div>
+    <div class="justification" id="justificationText"></div>
+    <button class="cta-btn" id="anotherBtn" style="margin-top:18px;">📝 עוד בקשה? (יש עוד?)</button>
+  </div>
+</div>
+
+<div id="floatingLayer"></div>
+<div id="confettiLayer"></div>
+
+<footer>
+  אתר זה אינו קשור בשום צורה לכרטיס האשראי המשפחתי. באמת. אנחנו מבטיחים 😅<br>
+  זה סתם בדיחה משפחתית — שום דבר כאן לא נשמר, נרשם או נשלח לשום מקום. הכול נעלם ברענון הדף.
+</footer>
+
+<script>
+  const chips = document.querySelectorAll('.chip');
+  const reqName = document.getElementById('reqName');
+  const overlay = document.getElementById('overlay');
+  const formView = document.getElementById('formView');
+  const approvalView = document.getElementById('approvalView');
+  const openFormBtn = document.getElementById('openFormBtn');
+  const closeBtn = document.getElementById('closeBtn');
+  const closeBtn2 = document.getElementById('closeBtn2');
+  const cashToggle = document.getElementById('cashToggle');
+  const priceInput = document.getElementById('price');
+  const priceNote = document.getElementById('priceNote');
+  const submitBtn = document.getElementById('submitBtn');
+  const anotherBtn = document.getElementById('anotherBtn');
+  const counterNum = document.getElementById('counterNum');
+
+  // Nothing here is saved or sent anywhere — it's just an in-page gag
+  // counter that resets every time the page loads. No data about anyone
+  // is stored, logged, or transmitted.
+  let sessionCounter = 0;
+  function bumpCounter(){
+    sessionCounter += 1;
+    counterNum.textContent = sessionCounter;
+    return sessionCounter;
+  }
+
+  function openModal(){
+    overlay.classList.add('open');
+    formView.style.display = 'block';
+    approvalView.style.display = 'none';
+  }
+  function closeModal(){
+    overlay.classList.remove('open');
+  }
+
+  openFormBtn.addEventListener('click', openModal);
+  closeBtn.addEventListener('click', closeModal);
+  closeBtn2.addEventListener('click', closeModal);
+  overlay.addEventListener('click', (e) => { if(e.target === overlay) closeModal(); });
+
+  chips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      chips.forEach(c => c.classList.remove('selected'));
+      chip.classList.add('selected');
+      reqName.value = chip.dataset.name;
+      openModal();
+    });
+  });
+
+  cashToggle.addEventListener('change', () => {
+    if(cashToggle.checked){
+      priceInput.dataset.prevValue = priceInput.value;
+      priceInput.value = 0;
+      priceInput.disabled = true;
+      priceNote.classList.add('show');
+    } else {
+      priceInput.disabled = false;
+      priceInput.value = priceInput.dataset.prevValue || '';
+      priceNote.classList.remove('show');
+    }
+  });
+
+  const justifications = [
+    'זה היה במבצע, אז בעצם חסכתי כסף.',
+    'כולן קונות דבר כזה, זה נורמלי לגמרי.',
+    'זה בשביל התינוקת, זה תמיד מוצדק.',
+    'ראיתי את זה רק פעם אחת ברשת, זה גורל.',
+    'זה הפריט האחרון במלאי, זו הייתה חובה קיומית.',
+    'זה בעצם "השקעה" לטווח ארוך.',
+    'זה היה צריך להיקנות לפני שמישהי אחרת תיקח.',
+    'לא קניתי כלום מזה 3 ימים, מגיע לי.'
+  ];
+
+  function fmtPrice(v, isCash){
+    if(isCash) return '0 ₪ (בזכות תשלום במזומן)';
+    if(!v) return 'לא צויין (אבל ברור שזה לא זול)';
+    return v + ' ₪';
+  }
+
+  const confettiLayer = document.getElementById('confettiLayer');
+  const confettiColors = ['#e8b4c0', '#d4a94c', '#c98ea0', '#4c8c6b', '#f2d9b8', '#c65b5b'];
+
+  function fireConfetti(){
+    const pieceCount = 70;
+    for(let i = 0; i < pieceCount; i++){
+      const piece = document.createElement('div');
+      piece.className = 'confetti-piece';
+      piece.style.left = Math.random() * 100 + 'vw';
+      piece.style.background = confettiColors[Math.floor(Math.random() * confettiColors.length)];
+      piece.style.animationDuration = (2.2 + Math.random() * 1.4) + 's';
+      piece.style.animationDelay = (Math.random() * 0.3) + 's';
+      piece.style.borderRadius = Math.random() < 0.5 ? '50%' : '2px';
+      confettiLayer.appendChild(piece);
+      setTimeout(() => piece.remove(), 4200);
+    }
+  }
+
+  // Private family in-joke: "ניצת הדובדבן" is the store Hodaya can never
+  // walk past without buying something. These are playful stand-ins, not
+  // real product photos or an affiliation with the store.
+  const floatingLayer = document.getElementById('floatingLayer');
+
+  // Private family in-joke: these are the stores Hodaya's love for is,
+  // by her own family's account, wildly disproportionate. Plain
+  // emoji + text stand-ins, not real logos or product photos.
+  // Wordmark-style hints per brand (font/weight/spacing), not copies of
+  // any real logo artwork — just typographic flavor for each name.
+  const BRANDS = [
+    { name: 'ניצת הדובדבן', emoji: '🌸', color: '#c98ea0',
+      labelStyle: "font-family: Georgia, 'Times New Roman', serif; font-style: italic; font-weight: 700;" },
+    { name: 'טישו הנמל', emoji: '⚓', color: '#c99a4c',
+      labelStyle: "font-family: Georgia, serif; font-weight: 800;" },
+    { name: 'אושר עד', emoji: '🛒', color: '#4c8c6b',
+      labelStyle: "font-family: Arial, sans-serif; font-weight: 900;" },
+    { name: 'ZARA', emoji: '👚', color: '#2b2b2b',
+      labelStyle: "font-family: 'Helvetica Neue', Arial, sans-serif; font-weight: 300; letter-spacing: 2px; text-transform: uppercase;" }
+  ];
+
+  function spawnBubbleBurst(x, y, color){
+    const burstCount = 8;
+    for(let i = 0; i < burstCount; i++){
+      const p = document.createElement('div');
+      p.className = 'pop-burst';
+      p.style.left = x + 'px';
+      p.style.top = y + 'px';
+      p.style.background = color;
+      const angle = (Math.PI * 2 * i) / burstCount;
+      const dist = 24 + Math.random() * 14;
+      p.style.setProperty('--dx', Math.cos(angle) * dist + 'px');
+      p.style.setProperty('--dy', Math.sin(angle) * dist + 'px');
+      p.style.animationDuration = '0.4s';
+      floatingLayer.appendChild(p);
+      setTimeout(() => p.remove(), 450);
+    }
+  }
+
+  function spawnFloatingBubble(){
+    const brand = BRANDS[Math.floor(Math.random() * BRANDS.length)];
+    const el = document.createElement('div');
+    el.className = 'bubble';
+    el.style.background = `radial-gradient(circle at 30% 28%, rgba(255,255,255,0.85), ${brand.color} 72%)`;
+    el.innerHTML = `
+      <span class="emoji">${brand.emoji}</span>
+      <span class="brand-label" style="${brand.labelStyle}">${brand.name}</span>
+    `;
+    const topVh = 8 + Math.random() * 74;
+    const leftVw = 4 + Math.random() * 74;
+    el.style.top = topVh + 'vh';
+    el.style.left = leftVw + 'vw';
+    const duration = 4.5 + Math.random() * 2;
+    el.style.animationDuration = duration + 's';
+    floatingLayer.appendChild(el);
+
+    setTimeout(() => {
+      const rect = el.getBoundingClientRect();
+      spawnBubbleBurst(rect.left + rect.width / 2, rect.top + rect.height / 2, brand.color);
+    }, duration * 1000 * 0.9);
+
+    setTimeout(() => el.remove(), duration * 1000 + 200);
+  }
+
+  function scheduleNextBubble(){
+    const delay = 3000 + Math.random() * 3500;
+    setTimeout(() => {
+      spawnFloatingBubble();
+      scheduleNextBubble();
+    }, delay);
+  }
+  scheduleNextBubble();
+
+  submitBtn.addEventListener('click', () => {
+    const name = reqName.value || 'אלמוני/ת מסתורי/ת';
+    const cat = document.getElementById('category').value;
+    const type = document.getElementById('itemType').value || 'פריט ללא שם, אבל בטוח נחוץ';
+    const isCash = cashToggle.checked;
+    const price = priceInput.value;
+    const dedication = document.getElementById('dedication').value;
+
+    const total = bumpCounter();
+
+    document.getElementById('ticketBody').innerHTML = `
+      <b>מס' אישור:</b> #${1000 + total}<br>
+      <b>מבקש/ת:</b> ${name}<br>
+      <b>קטגוריה:</b> ${cat}<br>
+      <b>פריט:</b> ${type}<br>
+      <b>מחיר:</b> ${fmtPrice(price, isCash)}<br>
+      ${dedication ? `<b>הקדשה:</b> ${dedication}<br>` : ''}
+      <b>זמן אישור:</b> מיידי, כרגיל
+    `;
+    document.getElementById('justificationText').textContent =
+      '💬 הצדקה רשמית: "' + justifications[Math.floor(Math.random()*justifications.length)] + '"';
+
+    formView.style.display = 'none';
+    approvalView.style.display = 'block';
+    fireConfetti();
+  });
+
+  anotherBtn.addEventListener('click', () => {
+    formView.reset && formView.reset();
+    document.getElementById('itemType').value = '';
+    document.getElementById('price').value = '';
+    document.getElementById('dedication').value = '';
+    cashToggle.checked = false;
+    priceInput.disabled = false;
+    priceNote.classList.remove('show');
+    openModal();
+  });
+</script>
+
+</body>
+</html>
