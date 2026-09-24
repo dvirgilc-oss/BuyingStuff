@@ -260,6 +260,28 @@
     color:#a08e91;
     padding: 20px 16px 40px;
   }
+
+  #confettiLayer{
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 100;
+  }
+  .confetti-piece{
+    position: absolute;
+    top: -20px;
+    width: 9px;
+    height: 14px;
+    opacity: 0.95;
+    animation-name: confetti-fall;
+    animation-timing-function: cubic-bezier(0.2, 0.6, 0.4, 1);
+    animation-fill-mode: forwards;
+  }
+  @keyframes confetti-fall{
+    0%   { transform: translateY(0) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(105vh) rotate(600deg); opacity: 0; }
+  }
 </style>
 </head>
 <body>
@@ -366,6 +388,8 @@
   </div>
 </div>
 
+<div id="confettiLayer"></div>
+
 <footer>
   אתר זה אינו קשור בשום צורה לכרטיס האשראי המשפחתי. באמת. אנחנו מבטיחים 😅<br>
   זה סתם בדיחה משפחתית — שום דבר כאן לא נשמר, נרשם או נשלח לשום מקום. הכול נעלם ברענון הדף.
@@ -450,6 +474,24 @@
     return v + ' ₪';
   }
 
+  const confettiLayer = document.getElementById('confettiLayer');
+  const confettiColors = ['#e8b4c0', '#d4a94c', '#c98ea0', '#4c8c6b', '#f2d9b8', '#c65b5b'];
+
+  function fireConfetti(){
+    const pieceCount = 70;
+    for(let i = 0; i < pieceCount; i++){
+      const piece = document.createElement('div');
+      piece.className = 'confetti-piece';
+      piece.style.left = Math.random() * 100 + 'vw';
+      piece.style.background = confettiColors[Math.floor(Math.random() * confettiColors.length)];
+      piece.style.animationDuration = (2.2 + Math.random() * 1.4) + 's';
+      piece.style.animationDelay = (Math.random() * 0.3) + 's';
+      piece.style.borderRadius = Math.random() < 0.5 ? '50%' : '2px';
+      confettiLayer.appendChild(piece);
+      setTimeout(() => piece.remove(), 4200);
+    }
+  }
+
   submitBtn.addEventListener('click', () => {
     const name = reqName.value || 'אלמוני/ת מסתורי/ת';
     const cat = document.getElementById('category').value;
@@ -474,6 +516,7 @@
 
     formView.style.display = 'none';
     approvalView.style.display = 'block';
+    fireConfetti();
   });
 
   anotherBtn.addEventListener('click', () => {
