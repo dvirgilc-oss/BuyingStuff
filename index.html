@@ -275,7 +275,7 @@
 
   <div class="counter-box">
     <div class="num" id="counterNum">0</div>
-    <div class="label">מוצרים שאושרו השנה בלי שממש היה בהם צורך 📦</div>
+    <div class="label">מוצרים שאושרו מאז שנפתח הדף, בלי שממש היה בהם צורך 📦</div>
   </div>
 
   <button class="cta-btn" id="openFormBtn">📝 פתיחת קריאה לרכישה משפחתית חדשה</button>
@@ -367,7 +367,8 @@
 </div>
 
 <footer>
-  אתר זה אינו קשור בשום צורה לכרטיס האשראי המשפחתי. באמת. אנחנו מבטיחים 😅
+  אתר זה אינו קשור בשום צורה לכרטיס האשראי המשפחתי. באמת. אנחנו מבטיחים 😅<br>
+  זה סתם בדיחה משפחתית — שום דבר כאן לא נשמר, נרשם או נשלח לשום מקום. הכול נעלם ברענון הדף.
 </footer>
 
 <script>
@@ -386,21 +387,15 @@
   const anotherBtn = document.getElementById('anotherBtn');
   const counterNum = document.getElementById('counterNum');
 
-  const COUNTER_KEY = 'familyPurchaseCounter';
-
-  function loadCounter(){
-    let n = 0;
-    try { n = parseInt(localStorage.getItem(COUNTER_KEY) || '0', 10) || 0; } catch(e){}
-    counterNum.textContent = n;
-    return n;
-  }
+  // Nothing here is saved or sent anywhere — it's just an in-page gag
+  // counter that resets every time the page loads. No data about anyone
+  // is stored, logged, or transmitted.
+  let sessionCounter = 0;
   function bumpCounter(){
-    let n = loadCounter() + 1;
-    try { localStorage.setItem(COUNTER_KEY, String(n)); } catch(e){}
-    counterNum.textContent = n;
-    return n;
+    sessionCounter += 1;
+    counterNum.textContent = sessionCounter;
+    return sessionCounter;
   }
-  loadCounter();
 
   function openModal(){
     overlay.classList.add('open');
